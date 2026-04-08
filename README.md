@@ -3,7 +3,7 @@ https://huggingface.co/spaces/Avimanyu8008/medtriage-env
 
 # 🏥 AI Medical Triage System (OpenEnv RL Project
 
-
+This project follows OpenEnv-style environment design with tasks, reward, and evaluation loop.
 
 ## 👋 Hi, I’m Avimanyu
 
