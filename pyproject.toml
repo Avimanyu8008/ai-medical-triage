@@ -2,9 +2,7 @@
 name = "medtriage-env"
 version = "0.1.0"
 description = "AI Medical Triage OpenEnv Project"
-authors = [
-    { name = "Avimanyu", email = "avimanyu@example.com" }
-]
+authors = [{ name = "Avimanyu", email = "avimanyu8008@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
 
@@ -12,13 +10,12 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "pydantic",
-    "gradio",
-    "openai"
+    "gradio"
 ]
 
 [tool.openenv]
 entrypoint = "inference.py"
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
