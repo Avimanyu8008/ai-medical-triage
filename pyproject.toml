@@ -2,14 +2,6 @@
 name = "medtriage-env"
 version = "0.1.0"
 description = "AI Medical Triage OpenEnv Project"
-authors = [
-    { name = "Avimanyu" }
-]
 
-dependencies = [
-    "fastapi",
-    "uvicorn",
-    "pydantic",
-    "gradio",
-    "openai"
-]
+[tool.openenv]
+entry_point = "app:app"
