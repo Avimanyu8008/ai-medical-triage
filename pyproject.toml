@@ -3,23 +3,27 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "medtriage-env"
+name = "MedTriage-Env"
 version = "0.1.0"
 description = "AI Medical Triage OpenEnv Project"
+readme = "README.md"
 requires-python = ">=3.10"
 
 dependencies = [
+    "openenv-core>=0.2.0",
     "fastapi",
     "uvicorn",
     "pydantic",
-    "gradio",
-    "openenv-core"
+    "gradio"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0"
+    "pytest"
 ]
 
 [project.scripts]
 server = "app:app"
+
+[tool.setuptools]
+include-package-data = true
