@@ -37,6 +37,20 @@ async def analyze_audio(file: UploadFile = File(...)):
         if size < 1000:
             return {"error": "Audio too small / empty"}
 
+        @app.post("/analyze-text")
+        async def analyze_text(text: str):
+            from deep_translator import GoogleTranslator
+
+            translated = GoogleTranslator(source='auto', target='en').translate(text)
+
+            ai_result = run_model(symptoms=translated)
+
+            return {
+                "original_text": text,
+                "translated_text": translated,
+                "ai_response": ai_result
+            }
+
         # 4) Transcribe
         segments, _ = model.transcribe(save_path)
 
