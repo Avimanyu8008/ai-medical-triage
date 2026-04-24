@@ -7,6 +7,11 @@ from server.inference import run_model
 
 app = FastAPI()
 
+# ✅ ADD THIS HERE
+@app.get("/")
+def home():
+    return {"message": "AI Medical Triage API is running 🚀"}
+
 # Load once
 model = WhisperModel("base", compute_type="int8")
 
