@@ -13,71 +13,103 @@ def run_model(symptoms: str):
 
     symptoms_lower = symptoms.lower()
 
-    steps = []
     decision = ""
+    urgency = ""
     advice = ""
+    risk_notes = ""
 
-    # Step 1
-    steps.append("Step 1: Analyze symptoms")
-
-    # Step 2 (rule-based decision)
+    # 🧠 RULE-BASED TRIAGE (CORE LOGIC)
     if "chest pain" in symptoms_lower:
-        steps.append("Step 2: Check breathing condition")
-
         if "breathing" in symptoms_lower:
             decision = "Emergency"
+            urgency = "High"
             advice = "Call emergency services immediately"
+            risk_notes = "Chest pain with breathing difficulty can indicate serious conditions like heart or lung issues."
         else:
             decision = "Emergency"
+            urgency = "High"
             advice = "Seek immediate medical attention"
+            risk_notes = "Chest pain alone can still be serious and should not be ignored."
 
     elif "fever" in symptoms_lower:
-        steps.append("Step 2: Check severity of fever")
         decision = "Non-emergency"
-        advice = "Rest, hydrate, and monitor temperature"
+        urgency = "Low to Moderate"
+        advice = "Rest, drink fluids, and monitor temperature"
+        risk_notes = "Fever is commonly caused by infections and usually resolves with rest."
 
     elif "headache" in symptoms_lower:
-        steps.append("Step 2: Check vision issues")
         decision = "Non-emergency"
-        advice = "Monitor symptoms and consult doctor if needed"
+        urgency = "Low"
+        advice = "Rest and monitor symptoms"
+        risk_notes = "Most headaches are not serious, but persistent or severe pain needs attention."
 
     elif "breathing" in symptoms_lower:
-        steps.append("Step 2: Evaluate breathing difficulty")
         decision = "Emergency"
+        urgency = "High"
         advice = "Seek immediate medical attention"
+        risk_notes = "Breathing difficulty can become life-threatening if untreated."
 
     else:
-        steps.append("Step 2: General assessment")
         decision = "Non-emergency"
-        advice = "Monitor symptoms"
+        urgency = "Low"
+        advice = "Monitor symptoms and rest"
+        risk_notes = "Symptoms appear mild but should still be observed."
 
-    # 🧠 LLM explanation
+    # 🤖 LLM (DOCTOR-STYLE EXPLANATION)
     try:
         response = client.chat.completions.create(
             model="Qwen/Qwen2.5-72B-Instruct",
             messages=[
-                {"role": "system", "content": "Explain the medical reasoning briefly."},
-                {"role": "user", "content": f"Patient symptoms: {symptoms}. Decision: {decision}"}
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a calm, helpful medical assistant. "
+                        "Explain in simple language so a normal patient can understand. "
+                        "Avoid complex medical jargon. "
+                        "Be reassuring but honest."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"Patient symptoms: {symptoms}\n"
+                        f"Risk level: {decision}\n"
+                        f"Explain what might be happening and what the patient should do."
+                    )
+                }
             ],
-            temperature=0.3,
-            max_tokens=120
+            temperature=0.4,
+            max_tokens=200
         )
 
-        explanation = response.choices[0].message.content
+        explanation = response.choices[0].message.content.strip()
 
     except Exception:
-        explanation = "Basic medical reasoning applied."
+        explanation = "Based on your symptoms, this appears to be a manageable condition, but monitoring is important."
 
-    # Final output
-    output = "[START]\n"
-    output += f"Patient symptoms: {symptoms}\n\n"
+    # 🧾 FINAL CLEAN OUTPUT (UI-FRIENDLY)
+    output = f"""
+🧠 Medical Summary:
 
-    for step in steps:
-        output += step + "\n"
+Patient symptoms:
+👉 {symptoms}
 
-    output += f"\nExplanation: {explanation}\n"
-    output += f"\nFinal: {decision}\n"
-    output += f"Advice: {advice}\n"
-    output += "[END]"
+📊 Risk Level:
+👉 {decision} ({urgency})
 
-    return output
+📘 What this means:
+{explanation}
+
+⚠️ Important notes:
+{risk_notes}
+
+💡 What you should do:
+👉 {advice}
+
+🚑 When to seek immediate help:
+• Symptoms get worse
+• New symptoms appear
+• Breathing difficulty or severe pain occurs
+"""
+
+    return output.strip()

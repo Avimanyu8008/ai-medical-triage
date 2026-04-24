@@ -2,15 +2,18 @@ import gradio as gr
 import requests
 from deep_translator import GoogleTranslator
 
-API_URL = "https://ai-medical-triage.onrender.com/analyze"
+AUDIO_API = "https://ai-medical-triage.onrender.com/analyze"
+TEXT_API = "https://ai-medical-triage.onrender.com/analyze-text"
 
 
-# 🧹 Clean AI response
+# 🧹 Clean + improve AI response
 def format_ai_response(text):
     if not text:
-        return "No response"
+        return "⚠️ AI did not return a response"
 
     text = text.replace("[START]", "").replace("[END]", "").strip()
+
+    # Better readability
     text = text.replace("Step 1:", "\n🔹 Step 1:")
     text = text.replace("Step 2:", "\n🔹 Step 2:")
     text = text.replace("Explanation:", "\n📘 Explanation:")
@@ -20,7 +23,7 @@ def format_ai_response(text):
     return text.strip()
 
 
-# 🎤 AUDIO
+# 🎤 AUDIO FUNCTION
 def analyze_audio(audio):
     if audio is None:
         return "❌ No audio", "", ""
@@ -28,41 +31,48 @@ def analyze_audio(audio):
     try:
         with open(audio, "rb") as f:
             res = requests.post(
-                API_URL,
+                AUDIO_API,
                 files={"file": ("audio.wav", f, "audio/wav")}
             )
 
         data = res.json()
+        print("AUDIO DEBUG:", data)
+
+        if "error" in data:
+            return "", "", f"❌ {data['error']}"
 
         return (
             data.get("detected_text", ""),
             data.get("translated_text", ""),
-            format_ai_response(data.get("ai_response", ""))
+            format_ai_response(data.get("ai_response"))
         )
 
     except Exception as e:
-        return f"❌ Error: {str(e)}", "", ""
+        return "", "", f"❌ Error: {str(e)}"
 
 
-# 🧾 TEXT
+# 🧾 TEXT FUNCTION (FIXED)
 def analyze_text(text):
     if not text:
         return "", "", "❌ Please enter symptoms"
 
     try:
-        translated = GoogleTranslator(source='auto', target='en').translate(text)
-
-        # 🔥 Send to your AI (same as backend logic)
         res = requests.post(
-            API_URL,
-            files={"file": ("dummy.wav", b"", "audio/wav")}  # dummy call if needed
+            TEXT_API,
+            data={"text": text}
         )
 
         data = res.json()
+        print("TEXT DEBUG:", data)
 
-        ai = format_ai_response(data.get("ai_response", ""))
+        if "error" in data:
+            return "", "", f"❌ {data['error']}"
 
-        return text, translated, ai
+        return (
+            data.get("original_text", ""),
+            data.get("translated_text", ""),
+            format_ai_response(data.get("ai_response"))
+        )
 
     except Exception as e:
         return "", "", f"❌ Error: {str(e)}"
@@ -83,16 +93,16 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             audio_input = gr.Audio(
                 sources=["microphone", "upload"],
                 type="filepath",
-                label="🎤 Record or Upload"
+                label="🎤 Record or Upload your symptoms"
             )
 
-            voice_btn = gr.Button("🔍 Analyze Voice")
+            voice_btn = gr.Button("🔍 Analyze Voice", variant="primary")
 
             with gr.Row():
-                detected = gr.Textbox(label="🎤 Detected")
-                translated = gr.Textbox(label="🌍 English")
+                detected = gr.Textbox(label="🎤 Detected Speech")
+                translated = gr.Textbox(label="🌍 English Translation")
 
-            ai_voice = gr.Textbox(label="🧠 AI Advice", lines=10)
+            ai_voice = gr.Textbox(label="🧠 AI Medical Advice", lines=10)
 
             voice_btn.click(
                 analyze_audio,
@@ -107,19 +117,18 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 lines=3
             )
 
-            text_btn = gr.Button("🔍 Analyze Text")
+            text_btn = gr.Button("🔍 Analyze Text", variant="primary")
 
             with gr.Row():
                 detected_text = gr.Textbox(label="📝 Original")
                 translated_text = gr.Textbox(label="🌍 English")
 
-            ai_text = gr.Textbox(label="🧠 AI Advice", lines=10)
+            ai_text = gr.Textbox(label="🧠 AI Medical Advice", lines=10)
 
             text_btn.click(
                 analyze_text,
                 inputs=text_input,
                 outputs=[detected_text, translated_text, ai_text]
             )
-
 
 demo.launch()
