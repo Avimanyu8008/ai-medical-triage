@@ -1,14 +1,14 @@
 from fastapi import FastAPI, UploadFile, File
 import shutil
 import os
-import whisper
+from faster_whisper import WhisperModel
 from deep_translator import GoogleTranslator
 from inference import run_model
 
 app = FastAPI()
 
 # Load once
-model = whisper.load_model("base")
+model = WhisperModel("base", compute_type="int8")
 
 @app.post("/analyze")
 async def analyze_audio(file: UploadFile = File(...)):
@@ -33,8 +33,9 @@ async def analyze_audio(file: UploadFile = File(...)):
             return {"error": "Audio too small / empty"}
 
         # 4) Transcribe
-        result = model.transcribe(save_path, fp16=False)
-        text = result.get("text", "").strip()
+        segments, _ = model.transcribe(save_path)
+
+        text = " ".join([segment.text for segment in segments]).strip()
 
         if not text:
             return {"error": "No speech detected"}
