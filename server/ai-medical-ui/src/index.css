@@ -1,0 +1,20 @@
+.blackhole-bg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 20px;
+
+  background:
+  radial-gradient(circle at 50% -25%,
+    #000 23%,
+    #ff7a00 30%,
+    #733000 40%,
+    #000 55%
+  ),
+  radial-gradient(circle at top, #1e1b4b, #020617);
+
+  overflow: hidden;
+  position: relative;
+}
