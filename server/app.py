@@ -7,13 +7,11 @@ from faster_whisper import WhisperModel
 from deep_translator import GoogleTranslator
 from server.inference import run_model
 
+app = FastAPI()   # ✅ CREATE FIRST
 
-app = FastAPI()
-
-# ✅ CORS FIX (correct version)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-medical-triage.vercel.app/"],   # allow all for now
+    allow_origins=["*"],   # 🔥 keep this for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
