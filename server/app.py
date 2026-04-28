@@ -13,7 +13,7 @@ app = FastAPI()
 # ✅ CORS FIX (correct version)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # allow all for now
+    allow_origins=["https://ai-medical-triage.vercel.app/"],   # allow all for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
