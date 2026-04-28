@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import axios from "axios";
 
-// API endpoints
-const API_BASE = import.meta.env.VITE_API_BASE;
-
-const AUDIO_API = `${API_BASE}/analyze`;
-const TEXT_API = `${API_BASE}/analyze-text`;
-
 export default function App() {
+  // 🔥 ENV (inside component)
+  const API_BASE = import.meta.env.VITE_API_BASE;
+
+  console.log("API BASE:", API_BASE);
+
+  const AUDIO_API = `${API_BASE}/analyze`;
+  const TEXT_API = `${API_BASE}/analyze-text`;
+
   const [session, setSession] = useState(null);
 
   const [audio, setAudio] = useState(null);
@@ -20,7 +22,7 @@ export default function App() {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ AUTH STATE LISTENER
+  // ✅ AUTH STATE
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
@@ -79,6 +81,7 @@ export default function App() {
       setTranslated(res.data.translated_text || "");
       setAi(res.data.ai_response || "No AI response");
     } catch (err) {
+      console.error(err);
       setAi("❌ Failed to connect to server");
     }
 
@@ -110,6 +113,7 @@ export default function App() {
       setTranslated(res.data.translated_text || "");
       setAi(res.data.ai_response || "No AI response");
     } catch (err) {
+      console.error(err);
       setAi("❌ Failed to connect to server");
     }
 
@@ -132,20 +136,20 @@ export default function App() {
     );
   }
 
-  // ✅ MAIN APP (after login)
+  // ✅ MAIN APP
   return (
     <div className="blackhole-bg">
       <div style={styles.container}>
         <h1 style={styles.title}>🏥 AI Medical Triage</h1>
 
-        {/* 🔓 LOGOUT */}
+        {/* LOGOUT */}
         <div style={{ textAlign: "right", marginBottom: "10px" }}>
           <button onClick={handleLogout} style={styles.button}>
             Logout
           </button>
         </div>
 
-        {/* 🎤 AUDIO */}
+        {/* AUDIO */}
         <div style={styles.card}>
           <h2>🎤 Voice Input</h2>
           <input
@@ -158,7 +162,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* 🧾 TEXT */}
+        {/* TEXT */}
         <div style={styles.card}>
           <h2>🧾 Text Input</h2>
           <textarea
@@ -172,7 +176,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* 📊 RESULTS */}
+        {/* RESULTS */}
         <div style={styles.card}>
           <h3>🧾 Results</h3>
 
