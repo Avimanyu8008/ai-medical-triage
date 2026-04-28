@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "./lib/supabase";
 import axios from "axios";
 
 // API endpoints
@@ -8,6 +9,8 @@ const AUDIO_API = `${API_BASE}/analyze`;
 const TEXT_API = `${API_BASE}/analyze-text`;
 
 export default function App() {
+  const [session, setSession] = useState(null);
+
   const [audio, setAudio] = useState(null);
   const [text, setText] = useState("");
 
@@ -16,6 +19,39 @@ export default function App() {
   const [ai, setAi] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  // ✅ AUTH STATE LISTENER
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // ✅ LOGIN
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error) {
+      console.error("Login error:", error.message);
+    }
+  };
+
+  // ✅ LOGOUT
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const resetOutputs = () => {
     setDetected("");
@@ -80,10 +116,34 @@ export default function App() {
     setLoading(false);
   };
 
+  // 🔐 LOGIN SCREEN
+  if (!session) {
+    return (
+      <div
+        className="blackhole-bg"
+        style={{ textAlign: "center", paddingTop: "150px" }}
+      >
+        <h1>🏥 AI Medical Triage</h1>
+
+        <button onClick={handleGoogleLogin} style={styles.button}>
+          Sign in with Google 🚀
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ MAIN APP (after login)
   return (
     <div className="blackhole-bg">
       <div style={styles.container}>
         <h1 style={styles.title}>🏥 AI Medical Triage</h1>
+
+        {/* 🔓 LOGOUT */}
+        <div style={{ textAlign: "right", marginBottom: "10px" }}>
+          <button onClick={handleLogout} style={styles.button}>
+            Logout
+          </button>
+        </div>
 
         {/* 🎤 AUDIO */}
         <div style={styles.card}>
