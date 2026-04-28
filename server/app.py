@@ -11,7 +11,7 @@ app = FastAPI()   # ✅ CREATE FIRST
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # 🔥 keep this for now
+    allow_origins=["https://ai-medical-triage.vercel.app"],   # 🔥 keep this for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
