@@ -1,19 +1,22 @@
 from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
+
 from faster_whisper import WhisperModel
 from deep_translator import GoogleTranslator
 from server.inference import run_model
 
-app = FastAPI()
-from fastapi.middleware.cors import CORSMiddleware
 
+app = FastAPI()
+
+# ✅ CORS FIX (correct version)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-medical-triage.vercel.app/"],  # allow all for now
+    allow_origins=["*"],   # allow all for now
     allow_credentials=True,
-    allow_methods=["https://ai-medical-triage.vercel.app/"],
-    allow_headers=["https://ai-medical-triage.vercel.app/"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
