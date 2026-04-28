@@ -5,7 +5,7 @@ import os
 
 from faster_whisper import WhisperModel
 from deep_translator import GoogleTranslator
-from inference import run_model
+from server.inference import run_model
 
 app = FastAPI()
 
