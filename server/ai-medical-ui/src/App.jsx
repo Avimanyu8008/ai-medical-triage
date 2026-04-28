@@ -2,8 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 
 // API endpoints
-const AUDIO_API = "https://ai-medical-triage.onrender.com/analyze";
-const TEXT_API = "https://ai-medical-triage.onrender.com/analyze-text";
+const API_BASE = import.meta.env.VITE_API_BASE;
+
+const AUDIO_API = `${API_BASE}/analyze`;
+const TEXT_API = `${API_BASE}/analyze-text`;
 
 export default function App() {
   const [audio, setAudio] = useState(null);
