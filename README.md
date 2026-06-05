@@ -1,312 +1,262 @@
 ## 🔗 Live Demo
 https://ai-medical-triage.vercel.app/
 
-# 🏥 AI Medical Triage System (OpenEnv RL Project
+🏥 AI Medical Triage
 
-This project follows OpenEnv-style environment design with tasks, reward, and evaluation loop.
+Multilingual AI-powered healthcare assistant that understands symptoms in Tamil, Hindi, and English, translates them into English, analyzes them using AI, and provides a structured medical summary with risk assessment.
 
-## 👋 Hi, I’m Avimanyu
+🌟 Features
+📝 Multilingual Symptom Analysis
 
-This project started as a simple idea:
-**“Can we build a system that thinks like a first-level doctor?”**
+Users can describe symptoms in:
 
-Not to replace doctors — but to **quickly classify cases as emergency vs non-emergency** and guide users.
-
-But I didn’t stop there.
-
-I turned this into an **RL-style evaluation system using OpenEnv**, where:
-
-* the AI *acts like an agent*
-* patient symptoms are *inputs*
-* decisions are *actions*
-* correctness is *rewarded*
-
-So this is not just an app —
-👉 it’s a **mini AI environment with grading + scoring**
-
----
-
-# 🚨 Problem
-
-In real life:
-
-* People panic for minor issues
-* People ignore serious symptoms
-* Hospitals get overloaded
-
-We need a **fast triage layer** that:
-
-* understands symptoms
-* prioritizes severity
-* gives instant guidance
-
----
-
-# 💡 Solution
-
-I built a system that:
-
-1. Takes **natural language symptoms**
-2. Applies **rule-based reasoning (fast + reliable)**
-3. Uses **LLM for explanation (human-like thinking)**
-4. Classifies into:
-
-   * Emergency 🚨
-   * Non-emergency ✅
-5. Provides:
-
-   * Decision
-   * Advice
-   * Explanation
-
----
-
-# 🧠 What makes this project different?
-
-Most people built:
-❌ Chatbots
-❌ Simple symptom checkers
-
-I built:
-
-👉 **A complete AI evaluation environment**
-
-### ✔ Agent-style system
-
-* Input → Symptoms
-* Output → Decision
-* Behavior → Reasoning
-
-### ✔ Task system (Easy / Medium / Hard)
-
-* Single symptom → Easy
-* Multiple symptoms → Medium
-* Complex combinations → Hard
-
-### ✔ Automated Grader
-
-* Checks if AI output matches expected decision
-* No manual checking
-
-### ✔ Reward Logic
-
-* Correct → +1
-* Wrong → 0
-
-### ✔ Final Score
-
-* Shows performance of the AI system
-
-👉 This is exactly how RL environments are structured.
-
----
-
-# 🎮 OpenEnv Integration
-
-This project follows OpenEnv principles:
-
-| Requirement | Implementation            |
-| ----------- | ------------------------- |
-| Environment | `inference.py`            |
-| Tasks       | Defined inside code       |
-| Agent       | `run_model()`             |
-| Actions     | Emergency / Non-emergency |
-| Reward      | 0 or 1                    |
-| Evaluation  | Final score               |
-
----
-
-# ⚙️ How it works (simple)
-
-### Step 1: Rule-based decision
-
-Fast logic for safety:
-
-* chest pain → emergency
-* breathing issue → emergency
-* fever → non-emergency
-
-👉 This ensures **reliability**
-
----
-
-### Step 2: LLM explanation
-
-Using:
-
-* Qwen 2.5 (via HuggingFace)
-
-It explains:
-
-* WHY the decision was made
-* Like a real doctor
-
-👉 This adds **intelligence + trust**
-
----
-
-### Step 3: Output format
-
-```
-[START]
-Patient symptoms: ...
-
-Step 1: Analyze symptoms  
-Step 2: ...
-
-Explanation: ...
-
-Final: Emergency / Non-emergency  
-Advice: ...
-
-[END]
-```
-
----
-
-### Step 4: Evaluation system
+Tamil 🇮🇳
+Hindi 🇮🇳
+English 🇬🇧
 
 Example:
 
-```
-Input: fever  
-Expected: non-emergency  
-Reward: 1  
+எனக்கு வயிற்று வலியும் தலைவலியும் இருக்கிறது.
 
-Final Score: 4/4
-```
+Automatically translated to:
 
-👉 This turns the project into a **testable AI system**
+I have stomach ache and headache.
+🎤 Voice Input Support
 
----
+Users can upload audio recordings of symptoms.
 
-# 🧪 Difficulty Levels
+The system:
 
-### 🟢 Easy
+Converts speech to text
+Detects language automatically
+Translates to English
+Sends symptoms to the AI medical model
+Returns structured medical guidance
+🤖 AI Medical Analysis
 
-* fever
-* headache
+The AI generates:
 
-### 🟡 Medium
+Medical Summary
+Risk Level
+Condition Explanation
+Recommended Next Steps
 
-* chest pain + breathing
-* dizziness + weakness
+Example:
 
-### 🔴 Hard
+Risk Level: Low
 
-* long natural language inputs
-* multiple mixed symptoms
-* real-world messy descriptions
+Possible Cause:
+Mild digestive discomfort
 
-👉 The system handles ALL of them.
+Recommendation:
+Rest, hydration, monitor symptoms
+🔐 Authentication
 
----
+Supports secure login using:
 
-# 🖥️ UI (Gradio)
+Google OAuth
+Email Authentication
 
-* Simple interface
-* Enter symptoms
-* Get instant decision
+Powered by Supabase Authentication.
 
-Built using:
+☁️ Cloud Deployment
 
-* Gradio
-* HuggingFace Spaces
+Frontend and backend are deployed separately for scalability.
 
----
+🏗️ Architecture
+User
+ │
+ ▼
+React Frontend (Vercel)
+ │
+ ▼
+Supabase Authentication
+ │
+ ▼
+FastAPI Backend (Render)
+ │
+ ├── Speech-to-Text
+ │       ▼
+ │   Faster-Whisper
+ │
+ ├── Translation
+ │       ▼
+ │   Google Translator
+ │
+ └── Medical AI Model
+         ▼
+     AI Medical Summary
+🧠 AI Models Used
+1. Faster-Whisper
 
-# 📂 Project Structure
+Used for:
 
-```
-MedTriageEnvs/
+Speech Recognition
+Audio Transcription
+
+Model:
+
+WhisperModel("base")
+
+Purpose:
+
+Audio → Text
+
+Example:
+
+Tamil Audio
+     ↓
+"எனக்கு தலைவலி"
+2. Google Translator
+
+Library:
+
+deep-translator
+
+Translator:
+
+GoogleTranslator
+
+Purpose:
+
+Tamil/Hindi → English
+
+Example:
+
+எனக்கு தலைவலி
+      ↓
+I have headache
+3. AI Medical Triage Model
+
+Custom inference pipeline:
+
+run_model()
+
+Purpose:
+
+Symptom analysis
+Risk assessment
+Medical summary generation
+User guidance
+🛠️ Tech Stack
+Frontend
+React
+Vite
+Axios
+CSS
+Backend
+FastAPI
+Uvicorn
+Python
+Authentication
+Supabase Auth
+Google OAuth
+AI & NLP
+Faster-Whisper
+Deep Translator
+Custom Medical Inference Engine
+Deployment
+Frontend
+Vercel
+Backend
+Render
+📂 Project Structure
+MedTriageEnvs
 │
-├── app.py              # UI
-├── inference.py       # Core logic + RL tasks
-├── openenv.yaml       # Environment config
-├── requirements.txt   # Dependencies
-├── env/               # Modular structure
-├── tasks/             # Task definitions
-```
+├── server
+│   ├── app.py
+│   ├── inference.py
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── ai-medical-ui
+│   ├── src
+│   ├── public
+│   ├── package.json
+│   └── vite.config.js
+│
+└── README.md
+🚀 Local Setup
+Clone Repository
+git clone https://github.com/yourusername/ai-medical-triage.git
 
----
+cd ai-medical-triage
+Backend
+cd server
 
-# 🚀 How to run
-
-```bash
 pip install -r requirements.txt
-python app.py
-```
 
----
+uvicorn app:app --reload
 
-# 🔥 Why this project stands out
+Backend:
 
-### 1. Not just UI — full system
+http://127.0.0.1:8000
+Frontend
+cd ai-medical-ui
 
-Most submissions stop at frontend
-👉 This has backend + logic + evaluation
+npm install
 
----
+npm run dev
 
-### 2. RL thinking applied
+Frontend:
 
-Even without full RL training:
+http://localhost:5173
+🌐 Production URLs
+Frontend
+https://ai-medical-triage.vercel.app
+Backend
+https://ai-medical-triage.onrender.com
+🔄 API Endpoints
+Health Check
+GET /
 
-* Agent
-* Tasks
-* Rewards
-* Evaluation
+Response:
 
-👉 This is how real AI systems are tested
+{
+  "message": "AI Medical Triage API is running 🚀"
+}
+Text Analysis
+POST /analyze-text
 
----
+Input:
 
-### 3. Safe + practical
+Symptoms in Tamil/Hindi/English
 
-* Rule-based core (no hallucination risk)
-* LLM only for explanation
+Output:
 
----
+{
+  "original_text": "...",
+  "translated_text": "...",
+  "ai_response": "..."
+}
+Audio Analysis
+POST /analyze
 
-### 4. Scalable design
+Input:
 
-Can be extended to:
+Audio File (.wav)
 
-* multilingual support
-* voice input
-* hospital integration
+Output:
 
----
+{
+  "detected_text": "...",
+  "translated_text": "...",
+  "ai_response": "..."
+}
+🎯 Future Improvements
+Real-time microphone recording
+Multi-language voice responses
+Medicine recommendations
+Appointment booking integration
+Doctor consultation escalation
+Emergency detection alerts
+Patient health history tracking
+Personalized health monitoring
+👨‍💻 Team
 
-### 5. Real-world impact
+AI Medical Triage
 
-This is not a toy project.
-
-👉 This can actually be used as:
-
-* hospital triage assistant
-* telemedicine pre-check system
-
----
-
-# 📌 What I learned
-
-* How to combine **rules + LLM**
-* How to design **evaluation systems**
-* How to think like an **AI system designer**
-* How to structure projects for **real-world use**
-
----
-
-# 🏁 Final Thought
-
-I didn’t just build an app.
-
-I built a **mini AI system that can be tested, evaluated, and improved like a real model.**
-
-That’s what makes this project different.
-
----
+Built to make preliminary healthcare guidance accessible in native languages using AI, speech recognition, translation, and cloud technologies.
 
 ## 👨‍💻 Built by
 
