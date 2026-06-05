@@ -1,5 +1,5 @@
 ## 🔗 Live Demo
-https://huggingface.co/spaces/Avimanyu8008/medtriage-env
+https://ai-medical-triage.vercel.app/
 
 # 🏥 AI Medical Triage System (OpenEnv RL Project
 
